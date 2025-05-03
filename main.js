@@ -59,13 +59,39 @@ function setAutoLaunch(enable) {
       path: process.execPath,
     });
     if (enable) {
-      launcher.enable();
+      launcher.enable().then(() => {
+        launcher.isEnabled().then((isEnabled) => {
+          autoLaunchEnabled = isEnabled;
+          updateTrayMenu();
+        });
+      });
     } else {
-      launcher.disable();
+      launcher.disable().then(() => {
+        launcher.isEnabled().then((isEnabled) => {
+          autoLaunchEnabled = isEnabled;
+          updateTrayMenu();
+        });
+      });
     }
-    autoLaunchEnabled = enable;
   } catch (err) {
-    // Ignore auto-launch errors for now
+    // Optionally log error
+    // console.error('Failed to set auto-launch:', err);
+  }
+}
+
+// Initialize autoLaunchEnabled from system state
+async function initAutoLaunch() {
+  try {
+    const AutoLaunch = require('auto-launch');
+    const launcher = new AutoLaunch({
+      name: 'Google Keep Desktop',
+      path: process.execPath,
+    });
+    autoLaunchEnabled = await launcher.isEnabled();
+  } catch (err) {
+    autoLaunchEnabled = false;
+    // Optionally log error
+    // console.error('Failed to check auto-launch status:', err);
   }
 }
 
@@ -122,7 +148,7 @@ function updateTrayMenu() {
       checked: autoLaunchEnabled,
       click: () => {
         setAutoLaunch(!autoLaunchEnabled);
-        updateTrayMenu();
+        // updateTrayMenu(); // Now handled in setAutoLaunch after async check
       },
     },
     {
@@ -147,7 +173,8 @@ function updateTrayMenu() {
   tray.setContextMenu(contextMenu);
 }
 
-app.on('ready', () => {
+app.on('ready', async () => {
+  await initAutoLaunch();
   createWindow();
   createTray();
   if (mainWindow) {
