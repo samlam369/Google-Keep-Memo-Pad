@@ -20,7 +20,7 @@ Google Keep Desktop is an Electron-based desktop application that provides quick
 
 ### Installation
 ```sh
-git clone https://github.com/yourusername/Google-Keep-Desktop.git
+git clone https://github.com/samlam369/Google-Keep-Desktop.git
 cd Google-Keep-Desktop
 npm install
 npm start
