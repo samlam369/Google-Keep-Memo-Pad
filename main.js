@@ -4,7 +4,6 @@ const fs = require('fs');
 
 let mainWindow;
 let tray;
-let autoLaunchEnabled = false; // Default: disabled
 let alwaysOnTop = false; // Track always-on-top state
 
 const WINDOW_WIDTH = 300;
@@ -49,50 +48,6 @@ function getIconPath() {
   const iconPng = path.join(__dirname, 'icon.png');
   if (fs.existsSync(iconPng)) return iconPng;
   return undefined; // fallback to Electron default
-}
-
-function setAutoLaunch(enable) {
-  try {
-    const AutoLaunch = require('auto-launch');
-    const launcher = new AutoLaunch({
-      name: 'Google Keep Desktop',
-      path: process.execPath,
-    });
-    if (enable) {
-      launcher.enable().then(() => {
-        launcher.isEnabled().then((isEnabled) => {
-          autoLaunchEnabled = isEnabled;
-          updateTrayMenu();
-        });
-      });
-    } else {
-      launcher.disable().then(() => {
-        launcher.isEnabled().then((isEnabled) => {
-          autoLaunchEnabled = isEnabled;
-          updateTrayMenu();
-        });
-      });
-    }
-  } catch (err) {
-    // Optionally log error
-    // console.error('Failed to set auto-launch:', err);
-  }
-}
-
-// Initialize autoLaunchEnabled from system state
-async function initAutoLaunch() {
-  try {
-    const AutoLaunch = require('auto-launch');
-    const launcher = new AutoLaunch({
-      name: 'Google Keep Desktop',
-      path: process.execPath,
-    });
-    autoLaunchEnabled = await launcher.isEnabled();
-  } catch (err) {
-    autoLaunchEnabled = false;
-    // Optionally log error
-    // console.error('Failed to check auto-launch status:', err);
-  }
 }
 
 function createTray() {
@@ -143,15 +98,6 @@ function updateTrayMenu() {
       },
     },
     {
-      label: 'Auto-launch on Startup',
-      type: 'checkbox',
-      checked: autoLaunchEnabled,
-      click: () => {
-        setAutoLaunch(!autoLaunchEnabled);
-        // updateTrayMenu(); // Now handled in setAutoLaunch after async check
-      },
-    },
-    {
       label: 'Always On Top',
       type: 'checkbox',
       checked: alwaysOnTop,
@@ -173,8 +119,7 @@ function updateTrayMenu() {
   tray.setContextMenu(contextMenu);
 }
 
-app.on('ready', async () => {
-  await initAutoLaunch();
+app.on('ready', () => {
   createWindow();
   createTray();
   if (mainWindow) {
