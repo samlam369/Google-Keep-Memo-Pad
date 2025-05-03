@@ -4,7 +4,6 @@ const fs = require('fs');
 
 let mainWindow;
 let tray;
-let autoLaunchEnabled = false; // Default: disabled
 let alwaysOnTop = false; // Track always-on-top state
 
 const WINDOW_WIDTH = 300;
@@ -51,24 +50,6 @@ function getIconPath() {
   return undefined; // fallback to Electron default
 }
 
-function setAutoLaunch(enable) {
-  try {
-    const AutoLaunch = require('auto-launch');
-    const launcher = new AutoLaunch({
-      name: 'Google Keep Desktop',
-      path: process.execPath,
-    });
-    if (enable) {
-      launcher.enable();
-    } else {
-      launcher.disable();
-    }
-    autoLaunchEnabled = enable;
-  } catch (err) {
-    // Ignore auto-launch errors for now
-  }
-}
-
 function createTray() {
   const icon = getIconPath();
   tray = new Tray(icon || undefined);
@@ -113,15 +94,6 @@ function updateTrayMenu() {
           mainWindow.show();
           mainWindow.focus();
         }
-        updateTrayMenu();
-      },
-    },
-    {
-      label: 'Auto-launch on Startup',
-      type: 'checkbox',
-      checked: autoLaunchEnabled,
-      click: () => {
-        setAutoLaunch(!autoLaunchEnabled);
         updateTrayMenu();
       },
     },
