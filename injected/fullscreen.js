@@ -1,33 +1,26 @@
-console.log('[gkfs] fullscreen.js loaded');
-
 // Adapted from chrome-google-keep-full-screen extension (src/content/script.js)
 // See: https://github.com/chrisputnam9/chrome-google-keep-full-screen
 // Chrome extension APIs are stubbed/removed for Electron compatibility.
 
-// --- DEBUG: Trace global and window.main ---
-console.log('[gkfs] typeof window:', typeof window);
-console.log('[gkfs] typeof window.main:', typeof window.main);
+// [CLEANUP] Removed all [gkfs] debug log statements for production
 
 // Force main.init() to run after DOMContentLoaded
 if (typeof window !== 'undefined') {
     // DEBUG: Trace readyState
-    console.log('[gkfs] document.readyState:', document.readyState);
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
         setTimeout(() => {
-            console.log('[gkfs] Attempting to run main.init() (immediate)');
             if (window.main && typeof window.main.init === 'function') {
                 window.main.init();
             } else {
-                console.log('[gkfs] window.main or main.init not found (immediate)');
+                console.log('window.main or main.init not found (immediate)');
             }
         }, 0);
     } else {
         window.addEventListener('DOMContentLoaded', () => {
-            console.log('[gkfs] DOMContentLoaded event fired');
             if (window.main && typeof window.main.init === 'function') {
                 window.main.init();
             } else {
-                console.log('[gkfs] window.main or main.init not found (DOMContentLoaded)');
+                console.log('window.main or main.init not found (DOMContentLoaded)');
             }
         });
     }
@@ -56,7 +49,6 @@ window.main = {
     observerNoteChanges: null,
 
     init: function () {
-        console.log('[gkfs] main.init() called');
         window.main.SELECTOR_OPEN_NOTE_CONTAINER =
             window.main.SELECTOR_NOTE_CONTAINER + ".IZ65Hb-QQhtn";
         window.main.SELECTOR_OPEN_NOTE =
@@ -65,7 +57,6 @@ window.main = {
             window.main.SELECTOR_OPEN_NOTE + " .IZ65Hb-yePe5c";
 
         window.main.elBody = document.querySelector("body");
-        console.log('[gkfs] elBody:', window.main.elBody);
 
         window.main.observerMenu = new MutationObserver(window.main.maybeInitMenu);
         window.main.observerNoteChanges = new MutationObserver(window.main.checkForOpenNote);
@@ -86,7 +77,6 @@ window.main = {
         const elCreatedNotesGroupContainer = document.querySelector(
             window.main.SELECTOR_CREATED_NOTES_GROUP_CONTAINER
         );
-        console.log('[gkfs] elCreatedNotesGroupContainer:', elCreatedNotesGroupContainer);
         if (elCreatedNotesGroupContainer) {
             window.main.observerNewNotes.observe(elCreatedNotesGroupContainer, {
                 childList: true,
@@ -102,7 +92,6 @@ window.main = {
                 childList: true,
             });
         }
-        console.log('[gkfs] main.init() finished');
     },
 
     initMenuObservers: function () {
@@ -136,15 +125,12 @@ window.main = {
     },
 
     checkForOpenNote: function () {
-        console.log('[gkfs] checkForOpenNote() called');
         const elNote = document.querySelector(window.main.SELECTOR_OPEN_NOTE);
-        console.log('[gkfs] elNote:', elNote);
         if (elNote) {
             window.main.elBody.classList.add("gkfs-has-open-note");
             window.main.elContainer = document.querySelector(
                 window.main.SELECTOR_OPEN_NOTE_CONTAINER
             );
-            console.log('[gkfs] elContainer:', window.main.elContainer);
             // Initialize container if needed
             if (!window.main.elContainer.classList.contains("gkfs-initialized")) {
                 window.main.elContainer.classList.add("gkfs-initialized");
@@ -154,15 +140,11 @@ window.main = {
             }
             if (elNote.hasOwnProperty("gkfs") && elNote.gkfs) {
                 window.main.note = elNote.gkfs;
-                console.log('[gkfs] Using existing note.gkfs instance');
-                window.main.note.toggle_fullscreen(window.main.fullscreen);
             } else {
-                console.log('[gkfs] Creating new Note instance');
                 window.main.note = new Note(elNote, window.main.elContainer);
             }
         } else {
             window.main.elBody.classList.remove("gkfs-has-open-note");
-            console.log('[gkfs] No open note found');
         }
     },
 
@@ -218,58 +200,20 @@ window.main = {
 
 // Note Object
 const Note = function (el, elContainer) {
-    console.log('[gkfs] Note constructor called', el, elContainer);
-    // Mark element init in progress
     el.gkfs = 1;
     const inst = this;
-    const elToolbar = el.querySelector(window.main.SELECTOR_OPEN_NOTE_TOOLBAR);
-    console.log('[gkfs] elToolbar:', elToolbar);
-    const elBtnMore = elToolbar && elToolbar.querySelector(
-        ".Q0hgme-LgbsSe.Q0hgme-Bz112c-LgbsSe.xl07Ob.INgbqf-LgbsSe.VIpgJd-LgbsSe"
-    );
-    console.log('[gkfs] elBtnMore:', elBtnMore);
-    // Set up toggle button
-    if (elBtnMore) {
-        const elBtnToggle = document.createElement("div");
-        elBtnToggle.setAttribute("role", "button");
-        elBtnToggle.setAttribute("aria-label", "Full-screen Toggle");
-        elBtnToggle.setAttribute("title", "Full-screen Toggle");
-        elBtnToggle.classList.add(
-            "gkfs-toggle",
-            "VIpgJd-j7LFlb",
-            "VIpgJd-j7LFlb-Bz112c",
-            "VIpgJd-j7LFlb-LgbsSe"
-        );
-        const elIcon = document.createElement("span");
-        elIcon.classList.add("gkfs-toggle-icon");
-        elBtnToggle.appendChild(elIcon);
-        elBtnMore.parentNode.insertBefore(elBtnToggle, elBtnMore);
-        console.log('[gkfs] Toggle button injected:', elBtnToggle);
-        // Set up properties
-        inst.el = el;
-        inst.elContainer = elContainer;
-        inst.elBtnToggle = elBtnToggle;
-        // Set up methods
-        inst.toggle_fullscreen = function (event_or_state) {
-            console.log('[gkfs] toggle_fullscreen called', event_or_state);
-            if (event_or_state === true || event_or_state === false) {
-                window.main.elBody.classList.toggle("gkfs-fullscreen", event_or_state);
-            } else {
-                window.main.elBody.classList.toggle("gkfs-fullscreen");
-            }
-            const active = window.main.elBody.classList.contains("gkfs-fullscreen");
-            const elBtns = document.querySelectorAll(".gkfs-toggle");
-            elBtns.forEach((elBtn) => {
-                elBtn.classList.toggle("active", active);
-            });
-            console.log('[gkfs] Fullscreen active:', active);
-        };
-        inst.update_buttons = function () {};
-        // Event listener, now that it's defined
-        elBtnToggle.addEventListener("click", inst.toggle_fullscreen);
-        // Fully initialized, set instance on element data
-        inst.el.gkfs = inst;
-    } else {
-        console.log('[gkfs] elBtnMore not found, toggle button not injected');
-    }
+    // Do NOT inject the fullscreen toggle button anymore
+    // Only set up methods and reference
+    inst.el = el;
+    inst.toggle_fullscreen = function (event_or_state) {
+        if (event_or_state === true || event_or_state === false) {
+            window.main.elBody.classList.toggle('gkfs-fullscreen', event_or_state);
+        } else {
+            window.main.elBody.classList.toggle('gkfs-fullscreen');
+        }
+        const active = window.main.elBody.classList.contains('gkfs-fullscreen');
+        // No toggle button to update
+    };
+    inst.update_buttons = function () {};
+    inst.el.gkfs = inst;
 };

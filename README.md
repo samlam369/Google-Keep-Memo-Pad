@@ -46,7 +46,7 @@ This app integrates the [chrome-google-keep-full-screen](https://github.com/chri
 
 - The extension code is located in `injected/fullscreen.js` and `injected/fullscreen.css`.
 - Injection is handled automatically after Google Keep loads.
-- To update the extension, replace these files with new versions from the upstream repo.
+- The UI has been simplified: the full-screen toggle button is no longer shown in the note toolbar, but full-screen mode is still enabled when opening a note.
 
 ## Development
 - Main process: `main.js`
