@@ -1,0 +1,14 @@
+{
+  "name": "google-keep-desktop",
+  "version": "1.0.0",
+  "description": "Electron desktop wrapper for Google Keep with system tray integration.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.2.4"
+  }
+}
