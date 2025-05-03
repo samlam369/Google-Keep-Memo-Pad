@@ -20,8 +20,9 @@ Google Keep Desktop is an Electron-based application that provides quick access 
 - The app displays an icon in the system tray when running.
 - **Double-click** on the tray icon toggles (shows/hides) the main window.
 - **Right-click** on the tray icon opens a context menu with:
-    - "Show/Hide" main window
-    - "Enable Auto-launch on Startup" (toggle, default: disabled)
+    - "Show Window" (checkbox, toggles window visibility)
+    - "Auto-launch on Startup" (checkbox, toggles auto-launch)
+    - "Always On Top" (checkbox, toggles window always-on-top)
     - "Quit" to close the app
 
 ### 2.2 Main Window
@@ -29,6 +30,7 @@ Google Keep Desktop is an Electron-based application that provides quick access 
 - **Resizable:** User can freely resize the window by dragging its edges/corners.
 - **Content:** Displays the live content of https://keep.google.com/u/0/ in a webview/browser window.
 - **Authentication:** User logs into Google Keep manually in the app window. Enlarging the window is supported for easier login.
+- **Always On Top:** User can toggle this feature from the tray menu.
 
 ### 2.3 Platform Support
 - **Primary:** Windows

@@ -5,6 +5,7 @@ const fs = require('fs');
 let mainWindow;
 let tray;
 let autoLaunchEnabled = false; // Default: disabled
+let alwaysOnTop = false; // Track always-on-top state
 
 const WINDOW_WIDTH = 300;
 const WINDOW_HEIGHT = 500;
@@ -23,6 +24,7 @@ function createWindow() {
     },
     icon: getIconPath(),
     autoHideMenuBar: true, // hide menu bar by default
+    alwaysOnTop: alwaysOnTop, // initialize with current state
   });
 
   mainWindow.loadURL('https://keep.google.com/u/0/');
@@ -101,7 +103,9 @@ function updateTrayMenu() {
   if (!tray) return;
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: mainWindow && mainWindow.isVisible() ? 'Hide' : 'Show',
+      label: 'Show Window',
+      type: 'checkbox',
+      checked: mainWindow && mainWindow.isVisible(),
       click: () => {
         if (mainWindow.isVisible()) {
           mainWindow.hide();
@@ -113,10 +117,21 @@ function updateTrayMenu() {
       },
     },
     {
-      label: (autoLaunchEnabled ? 'Disable' : 'Enable') + ' Auto-launch on Startup',
-      type: 'normal',
+      label: 'Auto-launch on Startup',
+      type: 'checkbox',
+      checked: autoLaunchEnabled,
       click: () => {
         setAutoLaunch(!autoLaunchEnabled);
+        updateTrayMenu();
+      },
+    },
+    {
+      label: 'Always On Top',
+      type: 'checkbox',
+      checked: alwaysOnTop,
+      click: () => {
+        alwaysOnTop = !alwaysOnTop;
+        if (mainWindow) mainWindow.setAlwaysOnTop(alwaysOnTop);
         updateTrayMenu();
       },
     },

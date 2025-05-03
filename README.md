@@ -4,8 +4,11 @@ Google Keep Desktop is an Electron-based desktop application that provides quick
 
 ## Features
 - System tray icon for quick access
+- Tray menu with checkboxes for:
+    - Show Window (toggle window visibility)
+    - Auto-launch on Startup (toggle auto-launch)
+    - Always On Top (toggle window always-on-top)
 - Double-click tray icon to show/hide main window
-- Right-click tray icon for menu: show/hide, enable auto-launch, quit
 - Main window displays https://keep.google.com/u/0/
 - Default window size: 500x300px, resizable
 - Manual login required
