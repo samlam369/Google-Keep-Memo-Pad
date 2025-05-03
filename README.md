@@ -40,6 +40,14 @@ This ensures the script always runs from your app's folder, so `npm start` works
 
 To remove auto-launch, simply delete the shortcut from the Startup folder.
 
+## Full Screen Extension Integration
+
+This app integrates the [chrome-google-keep-full-screen](https://github.com/chrisputnam9/chrome-google-keep-full-screen) extension functionality by injecting its JavaScript and CSS into the Google Keep window.
+
+- The extension code is located in `injected/fullscreen.js` and `injected/fullscreen.css`.
+- Injection is handled automatically after Google Keep loads.
+- To update the extension, replace these files with new versions from the upstream repo.
+
 ## Development
 - Main process: `main.js`
 - No auto-update or analytics in initial release

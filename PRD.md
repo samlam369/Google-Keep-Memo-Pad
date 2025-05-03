@@ -44,6 +44,13 @@ Google Keep Desktop is an Electron-based application that provides quick access 
 - No analytics, privacy, or data storage requirements at this stage.
 - No auto-update or advanced accessibility features planned for initial release.
 
+### 2.6 Full Screen Extension Integration (WIP)
+- The Electron app now injects the JavaScript and CSS from the open-source [chrome-google-keep-full-screen](https://github.com/chrisputnam9/chrome-google-keep-full-screen) extension into the Google Keep window.
+- The integration ensures that the full-screen logic executes in the renderer context and attaches its logic to the global window object for compatibility.
+- Debug logging has been added to trace script execution and note open/close events.
+- The full-screen mode is now triggered when opening a note.
+- Known Issue: The injected full-screen toggle button appears in the UI but is currently misplaced. UI/CSS adjustments are still pending.
+
 ---
 
 ## 3. Future Improvements (Not in Initial Scope)
