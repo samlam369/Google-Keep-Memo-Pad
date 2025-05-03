@@ -24,6 +24,7 @@ function createWindow() {
     icon: getIconPath(),
     autoHideMenuBar: true, // hide menu bar by default
     alwaysOnTop: alwaysOnTop, // initialize with current state
+    skipTaskbar: true, // do not show in taskbar
   });
 
   mainWindow.loadURL('https://keep.google.com/u/0/');
@@ -143,7 +144,7 @@ app.on('ready', () => {
   createTray();
   if (mainWindow) {
     mainWindow.once('ready-to-show', () => {
-      // Optionally show window at startup
+      mainWindow.show(); // Show window at startup
     });
   }
 });
