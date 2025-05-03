@@ -28,6 +28,10 @@ function createWindow() {
 
   mainWindow.loadURL('https://keep.google.com/u/0/');
 
+  mainWindow.webContents.on('did-finish-load', () => {
+    injectFullScreenExtension(mainWindow.webContents);
+  });
+
   mainWindow.on('close', (e) => {
     // Hide window instead of closing (app stays in tray)
     if (!app.isQuiting) {
@@ -39,6 +43,21 @@ function createWindow() {
 
   // Hide menu bar if not already hidden
   mainWindow.setMenuBarVisibility(false);
+}
+
+function injectFullScreenExtension(webContents) {
+  const fs = require('fs');
+  const path = require('path');
+  const jsPath = path.join(__dirname, 'injected', 'fullscreen.js');
+  const cssPath = path.join(__dirname, 'injected', 'fullscreen.css');
+  if (fs.existsSync(jsPath)) {
+    const script = fs.readFileSync(jsPath, 'utf8');
+    webContents.executeJavaScript(script);
+  }
+  if (fs.existsSync(cssPath)) {
+    const css = fs.readFileSync(cssPath, 'utf8');
+    webContents.insertCSS(css);
+  }
 }
 
 function getIconPath() {
