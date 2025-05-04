@@ -53,9 +53,9 @@ Google Keep Memo Pad is an Electron desktop application that delivers access to 
 
 ### 2.7 Extension Management
 - The app requires the forked extension repository [samlam369/chrome-google-keep-full-screen](https://github.com/samlam369/chrome-google-keep-full-screen) to be cloned within the app directory.
-- A setup script (`setup-extension.js`) automatically prepares the extension for use with Electron.
+- A setup script (`install-extension.js`) prepares the extension for use with the main app. It is ran automaticaly when `npm install` is executed.
 - Users can independently update both repositories as needed.
-- The fork contains necessary modifications for Electron compatibility while maintaining core functionality, with detailed documentation in `RepurposeNotes.md`.
+- The fork contains necessary modifications for Electron compatibility while maintaining core functionality, with detailed documentation in `README.md`.
 - Using our own fork allows us to maintain compatibility patches while still being able to incorporate upstream improvements when needed.
 
 ---
@@ -75,5 +75,5 @@ Google Keep Memo Pad is an Electron desktop application that delivers access to 
 ---
 
 ## 5. Appendix
-- **Last updated:** 2025-05-04
+- **Last updated:** 2025-05-05
 
