@@ -4,11 +4,20 @@
   "description": "Electron desktop wrapper for Google Keep with system tray integration.",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "update-extension": "cd chrome-google-keep-full-screen && git pull origin main && cd .."
   },
   "author": "",
   "license": "MIT",
+  "dependencies": {
+    "electron-chrome-extensions": "^4.7.0"
+  },
   "devDependencies": {
-    "electron": "^28.2.4"
-  }
+    "electron": "^35.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/samlam369/Google-Keep-Memo-Pad.git"
+  },
+  "extensionFork": "https://github.com/samlam369/chrome-google-keep-full-screen.git"
 }
