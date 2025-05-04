@@ -1,6 +1,6 @@
-# Google Keep Desktop
+# Google Keep Memo Pad
 
-Google Keep Desktop is an Electron-based desktop application that provides quick access to Google Keep from your system tray. Designed for Windows, with future cross-platform support in mind.
+Google Keep Memo Pad is an Electron desktop application that delivers access to Google Keep via a system tray icon. It features a narrow, resizable window, Always on Top functionality, Windows System Tray integration, and a full page note capability to mimick a memo pad while leveraging Google Keep's cloud synchronization and cross-platform support.
 
 ## Features
 - System tray icon for quick access
@@ -20,15 +20,15 @@ Google Keep Desktop is an Electron-based desktop application that provides quick
 
 ### Installation
 ```sh
-git clone https://github.com/yourusername/Google-Keep-Desktop.git
-cd Google-Keep-Desktop
+git clone https://github.com/samlam369/Google-Keep-Memo-Pad.git
+cd Google-Keep-Memo-Pad
 npm install
 npm start
 ```
 
 ## Auto-launch at Startup (Windows)
 
-To have Google Keep Desktop launch automatically when you log in:
+To have Google Keep Memo Pad launch automatically when you log in:
 
 1. Make sure you have [Node.js](https://nodejs.org/) installed.
 2. Use the provided `launch_keep.vbs` script in this repo to launch the app silently at startup.

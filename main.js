@@ -73,7 +73,7 @@ function getIconPath() {
 function createTray() {
   const icon = getIconPath();
   tray = new Tray(icon || undefined);
-  tray.setToolTip('Google Keep Desktop');
+  tray.setToolTip('Google Keep Memo Pad');
 
   tray.on('double-click', () => {
     if (mainWindow.isVisible()) {
@@ -118,7 +118,7 @@ function updateTrayMenu() {
       },
     },
     {
-      label: 'Always On Top',
+      label: 'Always on Top',
       type: 'checkbox',
       checked: alwaysOnTop,
       click: () => {

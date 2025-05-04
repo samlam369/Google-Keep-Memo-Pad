@@ -1,8 +1,8 @@
-# Injected Extension Code
+# Injected Extension Code for Google Keep Memo Pad
 
-This folder contains JavaScript and CSS extracted from the open-source [chrome-google-keep-full-screen](https://github.com/chrisputnam9/chrome-google-keep-full-screen) Chrome extension.
+This folder contains JavaScript and CSS extracted from the [chrome-google-keep-full-screen](https://github.com/chrisputnam9/chrome-google-keep-full-screen) Chrome extension for use in Google Keep Memo Pad.
 
-- `fullscreen.js`: Main content script to enable full-screen mode for Google Keep.
+- `fullscreen.js`: Main content script to enable full-screen mode for Google Keep Memo Pad.
 - `fullscreen.css`: CSS styles for the full-screen mode.
 
 ## Updating

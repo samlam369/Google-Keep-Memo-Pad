@@ -1,9 +1,9 @@
 # Product Requirements Document (PRD)
 
-## Project: Google Keep Desktop
+## Project: Google Keep Memo Pad
 
 ### Overview
-Google Keep Desktop is an Electron-based application that provides quick access to Google Keep from the system tray. The app is initially developed for Windows, with future consideration for cross-platform support (macOS/Linux).
+Google Keep Memo Pad is a technically advanced Electron desktop application that delivers streamlined, persistent access to Google Keep via a dedicated system tray icon. Unlike browser-based app installations, it features a compact, resizable window, Always on Top functionality, Windows System Tray integration, and a dedicated fullscreen note interface—closely mimicking a physical memo pad while leveraging Google Keep's cloud synchronization and cross-platform support.
 
 ---
 
