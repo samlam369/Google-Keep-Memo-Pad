@@ -38,7 +38,7 @@ Google Keep Memo Pad is an Electron desktop application that delivers access to 
 ### 2.4 Distribution & Setup
 - Distributed via GitHub. Users can clone the repo and run `npm start` to launch the app.
 - No installer or packaged distribution initially.
-- **Auto-launch:** Users can use the provided `launch_keep.vbs` script and add it to their Windows Startup folder for auto-launch functionality (see README for instructions).
+- **Auto-launch:** Users can use the provided `Google-Keep-Memo-Pad.vbs` script and add it to their Windows Startup folder for auto-launch functionality (see README for instructions).
 
 ### 2.5 Additional Notes
 - No analytics, privacy, or data storage requirements at this stage.
@@ -76,4 +76,3 @@ Google Keep Memo Pad is an Electron desktop application that delivers access to 
 
 ## 5. Appendix
 - **Last updated:** 2025-05-05
-

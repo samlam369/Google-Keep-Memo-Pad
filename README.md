@@ -47,8 +47,8 @@ npm start
 To have Google Keep Memo Pad launch automatically when you log in:
 
 1. Make sure you have [Node.js](https://nodejs.org/) installed.
-2. Use the provided `launch_keep.vbs` script in this repo to launch the app silently at startup.
-3. Right-click `launch_keep.vbs` and choose **Create shortcut**.
+2. Use the provided `Google-Keep-Memo-Pad.vbs` script in this repo to launch the app silently at startup.
+3. Right-click `Google-Keep-Memo-Pad.vbs` and choose **Create shortcut**.
 4. Press `Win + R`, type `shell:startup`, and press Enter. This opens your Startup folder.
 5. Move the **shortcut** (not the `.vbs` file itself) into the Startup folder.
 
