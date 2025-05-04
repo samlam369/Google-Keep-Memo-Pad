@@ -8,17 +8,12 @@
    cd Google-Keep-Memo-Pad
    ```
 
-2. **Clone the fullscreen extension fork inside the app directory**:
-   ```sh
-   git clone https://github.com/samlam369/chrome-google-keep-full-screen.git
-   ```
-
-3. **Install dependencies and run**:
+2. **Install dependencies (this will also auto-download the fullscreen extension fork)**:
    ```sh
    npm install
    ```
 
-4. **Start the app**:
+3. **Start the app**:
    ```sh
    npm start
    ```
@@ -68,6 +63,7 @@ This app integrates a forked version of the [chrome-google-keep-full-screen](htt
 - The extension is loaded from the `chrome-google-keep-full-screen` directory, using our [custom fork](https://github.com/samlam369/chrome-google-keep-full-screen) which contains Electron compatibility modifications.
 - The extension provides full-screen note viewing capability, with a toggle button in the note toolbar.
 - When opening a note, it automatically enters full-screen mode to maximize the note viewing experience.
+- The fullscreen extension fork will now be automatically downloaded during `npm install`.
 
 ### Updating Both Repositories
 
