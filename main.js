@@ -30,7 +30,7 @@ function createWindow() {
   mainWindow.loadURL('https://keep.google.com/u/0/');
 
   mainWindow.webContents.on('did-finish-load', () => {
-    injectFullScreenExtension(mainWindow.webContents);
+    // injectFullScreenExtension(mainWindow.webContents); // Temporarily disabled for sideload experiment
   });
 
   mainWindow.on('close', (e) => {
