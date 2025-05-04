@@ -1,5 +1,35 @@
 # Google Keep Memo Pad
 
+## First Time Install
+
+1. **Clone this repository**:
+   ```sh
+   git clone https://github.com/samlam369/Google-Keep-Memo-Pad.git
+   cd Google-Keep-Memo-Pad
+   ```
+
+2. **Clone the fullscreen extension repository inside the app directory**:
+   ```sh
+   git clone https://github.com/chrisputnam9/chrome-google-keep-full-screen.git
+   ```
+
+3. **Install dependencies and prepare the extension**:
+   ```sh
+   npm install
+   # This will automatically set up the extension manifest and patch the extension for Electron compatibility
+   ```
+
+4. **Start the app**:
+   ```sh
+   npm start
+   ```
+
+If you update either repository in the future, simply run:
+```sh
+npm run setup-extension
+```
+to re-apply the manifest and compatibility patch.
+
 Google Keep Memo Pad is an Electron desktop application that delivers access to Google Keep via a system tray icon. It features a narrow, resizable window, Always on Top functionality, Windows System Tray integration, and a full page note capability to mimick a memo pad while leveraging Google Keep's cloud synchronization and cross-platform support.
 
 ## Features
@@ -42,11 +72,55 @@ To remove auto-launch, simply delete the shortcut from the Startup folder.
 
 ## Full Screen Extension Integration
 
-This app integrates the [chrome-google-keep-full-screen](https://github.com/chrisputnam9/chrome-google-keep-full-screen) extension functionality by injecting its JavaScript and CSS into the Google Keep window.
+This app integrates the [chrome-google-keep-full-screen](https://github.com/chrisputnam9/chrome-google-keep-full-screen) extension by directly sideloading it into the Electron app.
 
-- The extension code is located in `injected/fullscreen.js` and `injected/fullscreen.css`.
-- Injection is handled automatically after Google Keep loads.
-- The UI has been simplified: the full-screen toggle button is no longer shown in the note toolbar, but full-screen mode is still enabled when opening a note.
+- The extension is loaded from the `chrome-google-keep-full-screen` directory, which should be cloned alongside the main repository.
+- The extension provides full-screen note viewing capability, with a toggle button in the note toolbar.
+- When opening a note, it automatically enters full-screen mode to maximize the note viewing experience.
+
+### Setup Instructions
+
+1. Clone this repository:
+   ```sh
+   git clone https://github.com/samlam369/Google-Keep-Memo-Pad.git
+   cd Google-Keep-Memo-Pad
+   ```
+
+2. Clone the fullscreen extension repository inside the app directory:
+   ```sh
+   git clone https://github.com/chrisputnam9/chrome-google-keep-full-screen.git
+   ```
+
+3. Install dependencies and run:
+   ```sh
+   npm install
+   npm start
+   ```
+
+### Updating Both Repositories
+
+Since this app integrates two separate repositories, you need to update each independently:
+
+1. Update the main app:
+   ```sh
+   # From the Google-Keep-Memo-Pad directory
+   git pull origin main
+   npm install  # Will automatically set up the extension manifest
+   ```
+
+2. Update the extension:
+   ```sh
+   # From the Google-Keep-Memo-Pad directory
+   cd chrome-google-keep-full-screen
+   git pull origin master
+   cd ..
+   npm run setup-extension  # Ensure manifest.json is properly configured
+   ```
+
+The setup process will automatically configure the extension for Electron compatibility by:
+- Copying and configuring the manifest.json file
+- Adding minimal error handling to make the extension work correctly in Electron
+- Preserving all extension functionality while ensuring it works in a desktop environment
 
 ## Development
 - Main process: `main.js`

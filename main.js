@@ -1,10 +1,12 @@
 const { app, BrowserWindow, Tray, Menu, nativeImage, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const { ElectronChromeExtensions } = require('electron-chrome-extensions');
 
 let mainWindow;
 let tray;
 let alwaysOnTop = false; // Track always-on-top state
+let extensions;
 
 const WINDOW_WIDTH = 300;
 const WINDOW_HEIGHT = 500;
@@ -139,9 +141,27 @@ function updateTrayMenu() {
   tray.setContextMenu(contextMenu);
 }
 
-app.on('ready', () => {
+app.on('ready', async () => {
+  // Initialize ElectronChromeExtensions with required license
+  extensions = new ElectronChromeExtensions({ license: "GPL-3.0" });
+
+  // Load the unpacked Chrome extension
+  const extPath = path.join(__dirname, 'chrome-google-keep-full-screen');
+  try {
+    const loadedExt = await (mainWindow ? mainWindow.webContents.session : require('electron').session.defaultSession).loadExtension(extPath, { allowFileAccess: true });
+    console.log('Loaded extension:', loadedExt);
+  } catch (err) {
+    console.error('Failed to load extension:', err);
+  }
+
   createWindow();
   createTray();
+  
+  // Open DevTools for debugging
+  if (mainWindow) {
+    // mainWindow.webContents.openDevTools();
+  }
+  
   if (mainWindow) {
     mainWindow.once('ready-to-show', () => {
       mainWindow.show(); // Show window at startup

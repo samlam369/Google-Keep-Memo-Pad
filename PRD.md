@@ -45,11 +45,17 @@ Google Keep Memo Pad is an Electron desktop application that delivers access to 
 - No auto-update or advanced accessibility features planned for initial release.
 
 ### 2.6 Full Screen Extension Integration
-- The Electron app injects the JavaScript and CSS from the [chrome-google-keep-full-screen](https://github.com/chrisputnam9/chrome-google-keep-full-screen) extension into the Google Keep window.
-- The UI has been simplified: the full-screen toggle button is no longer shown in the note toolbar, but full-screen mode is still enabled when opening a note.
-- The integration ensures that the full-screen logic executes in the renderer context and attaches its logic to the global window object for compatibility.
-- The full-screen mode is triggered when opening a note.
-- The bottom toolbar now responsively hides less important buttons when the window is very narrow, preventing the Close button from wrapping to a new line.
+- The Electron app sideloads the [chrome-google-keep-full-screen](https://github.com/chrisputnam9/chrome-google-keep-full-screen) Chrome extension directly into the app.
+- This provides full-screen editing capabilities for Google Keep notes, automatically expanding notes when opened.
+- A full-screen toggle button appears in the note toolbar, allowing users to exit full-screen mode if desired.
+- The extension is loaded natively using Electron's session API, allowing for seamless integration of the extension with zero modifications to the original extension code.
+- The integration leverages Electron's built-in Chrome extension compatibility capabilities, ensuring proper functionality across updates.
+
+### 2.7 Extension Management
+- The app requires the [chrome-google-keep-full-screen](https://github.com/chrisputnam9/chrome-google-keep-full-screen) extension to be cloned as a separate repository within the app directory.
+- A setup script (`setup-extension.js`) automatically prepares the extension for use with Electron.
+- Users can independently update both repositories as needed.
+- The extension's code remains unmodified, allowing for seamless upgrades when the original extension receives updates.
 
 ---
 

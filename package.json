@@ -4,11 +4,16 @@
   "description": "Electron desktop wrapper for Google Keep with system tray integration.",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "setup-extension": "node setup-extension.js",
+    "postinstall": "node setup-extension.js"
   },
   "author": "",
   "license": "MIT",
+  "dependencies": {
+    "electron-chrome-extensions": "^4.7.0"
+  },
   "devDependencies": {
-    "electron": "^28.2.4"
+    "electron": "^35.0.0"
   }
 }
