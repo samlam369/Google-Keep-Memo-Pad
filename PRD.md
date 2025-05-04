@@ -3,7 +3,7 @@
 ## Project: Google Keep Memo Pad
 
 ### Overview
-Google Keep Memo Pad is a technically advanced Electron desktop application that delivers streamlined, persistent access to Google Keep via a dedicated system tray icon. Unlike browser-based app installations, it features a compact, resizable window, Always on Top functionality, Windows System Tray integration, and a dedicated fullscreen note interface—closely mimicking a physical memo pad while leveraging Google Keep's cloud synchronization and cross-platform support.
+Google Keep Memo Pad is an Electron desktop application that delivers access to Google Keep via a system tray icon. It features a narrow, resizable window, Always on Top functionality, Windows System Tray integration, and a full page note capability to mimick a memo pad while leveraging Google Keep's cloud synchronization and cross-platform support.
 
 ---
 
@@ -68,5 +68,5 @@ Google Keep Memo Pad is a technically advanced Electron desktop application that
 ---
 
 ## 5. Appendix
-- **Last updated:** 2025-05-03
+- **Last updated:** 2025-05-04
 - **Contact:** [Your Name or GitHub handle]
