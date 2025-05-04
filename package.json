@@ -5,8 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "setup-extension": "node setup-extension.js",
-    "postinstall": "node setup-extension.js"
+    "update-extension": "cd chrome-google-keep-full-screen && git pull origin main && cd .."
   },
   "author": "",
   "license": "MIT",
@@ -15,5 +14,10 @@
   },
   "devDependencies": {
     "electron": "^35.0.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/samlam369/Google-Keep-Memo-Pad.git"
+  },
+  "extensionFork": "https://github.com/samlam369/chrome-google-keep-full-screen.git"
 }
