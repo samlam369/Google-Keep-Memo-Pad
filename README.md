@@ -23,6 +23,7 @@
 - Tray menu with checkboxes for:
     - Show Window (toggle window visibility)
     - Always On Top (toggle window always-on-top)
+    - Show Title Bar (toggle window title bar visibility)
 - Left-click tray icon to show/hide main window
 - Main window displays https://keep.google.com/u/0/
 - Default window size: 500x300px, resizable

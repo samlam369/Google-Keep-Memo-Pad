@@ -22,6 +22,7 @@ Google Keep Memo Pad is an Electron desktop application that delivers access to 
 - **Right-click** on the tray icon opens a context menu with:
     - "Show Window" (checkbox, toggles window visibility)
     - "Always On Top" (checkbox, toggles window always-on-top)
+    - "Show Title Bar" (checkbox, toggles window title bar visibility)
     - "Quit" to close the app
 
 ### 2.2 Main Window

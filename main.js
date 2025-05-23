@@ -6,6 +6,7 @@ const { ElectronChromeExtensions } = require('electron-chrome-extensions');
 let mainWindow;
 let tray;
 let alwaysOnTop = false; // Track always-on-top state
+let showTitleBar = true; // Track show-title-bar state, enabled by default
 let extensions;
 
 const WINDOW_WIDTH = 300;
@@ -27,6 +28,7 @@ function createWindow() {
     autoHideMenuBar: true, // hide menu bar by default
     alwaysOnTop: alwaysOnTop, // initialize with current state
     skipTaskbar: true, // do not show in taskbar
+    frame: showTitleBar, // control title bar visibility
   });
 
   mainWindow.loadURL('https://keep.google.com/u/0/');
@@ -46,7 +48,6 @@ function createWindow() {
   // Hide menu bar if not already hidden
   mainWindow.setMenuBarVisibility(false);
 }
-
 
 function getIconPath() {
   // Use a default icon if none exists
@@ -111,6 +112,24 @@ function updateTrayMenu() {
       click: () => {
         alwaysOnTop = !alwaysOnTop;
         if (mainWindow) mainWindow.setAlwaysOnTop(alwaysOnTop);
+        updateTrayMenu();
+      },
+    },
+    {
+      label: 'Show Title Bar',
+      type: 'checkbox',
+      checked: showTitleBar,
+      click: () => {
+        showTitleBar = !showTitleBar;
+        if (mainWindow) {
+          // Recreate window to apply frame change
+          const currentBounds = mainWindow.getBounds();
+          mainWindow.close();
+          mainWindow = null; // Clear reference to old window
+          createWindow();
+          mainWindow.setBounds(currentBounds);
+          mainWindow.show();
+        }
         updateTrayMenu();
       },
     },
