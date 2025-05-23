@@ -48,6 +48,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Add mouse tracking to window
   window.addEventListener('mousemove', trackMouse);
+  // Hide indicator if window loses focus
+  window.addEventListener('blur', () => {
+    visualIndicator.style.opacity = '0';
+  });
 
   // Insert elements when body is ready
   const insertElements = () => {
