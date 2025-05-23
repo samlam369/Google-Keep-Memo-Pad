@@ -32,6 +32,7 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
+      preload: path.join(__dirname, 'preload.js')
     },
     icon: getIconPath(),
     autoHideMenuBar: true, // hide menu bar by default

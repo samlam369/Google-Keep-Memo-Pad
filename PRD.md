@@ -32,6 +32,7 @@ Google Keep Memo Pad is an Electron desktop application that delivers access to 
 - **Content:** Displays the live content of https://keep.google.com/u/0/ in a webview/browser window. User can set a custom default URL (e.g., a specific note) via the tray menu.
 - **Authentication:** User logs into Google Keep manually in the app window. Enlarging the window is supported for easier login.
 - **Always On Top:** User can toggle this feature from the tray menu.
+- **Draggable Region:** A 16px high transparent margin at the top of the window enables window repositioning even when the title bar is hidden. The region provides visual feedback on hover with a subtle background color change.
 
 ### 2.3 Platform Support
 - **Primary:** Windows

@@ -28,7 +28,8 @@
 - Left-click tray icon to show/hide main window
 - Main window displays https://keep.google.com/u/0/
 - Default window size: 500x300px, resizable
-- Manual login required
+- Draggable window region: A subtle transparent margin at the top allows window repositioning even when the title bar is hidden
+- **Manual login required**
 
 ## Getting Started
 
