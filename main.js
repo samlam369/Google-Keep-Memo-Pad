@@ -10,17 +10,21 @@ const store = new Store();
 
 let mainWindow;
 let tray;
-let alwaysOnTop = false; // Track always-on-top state
-let showTitleBar = true; // Track show-title-bar state, enabled by default
+let alwaysOnTop = store.get('alwaysOnTop', false); // Persisted always-on-top state
+let showTitleBar = store.get('showTitleBar', true); // Persisted show-title-bar state, enabled by default
 let extensions;
 
-const WINDOW_WIDTH = 300;
-const WINDOW_HEIGHT = 500;
+const DEFAULT_WINDOW_WIDTH = 300;
+const DEFAULT_WINDOW_HEIGHT = 500; // Swapped to DEFAULT_ prefix for clarity
 
 function createWindow() {
+  // Load persisted window bounds
+  const savedBounds = store.get('windowBounds', {});
   mainWindow = new electron.BrowserWindow({
-    width: WINDOW_WIDTH,
-    height: WINDOW_HEIGHT,
+    width: savedBounds.width || DEFAULT_WINDOW_WIDTH,
+    height: savedBounds.height || DEFAULT_WINDOW_HEIGHT,
+    x: typeof savedBounds.x === 'number' ? savedBounds.x : undefined,
+    y: typeof savedBounds.y === 'number' ? savedBounds.y : undefined,
     minWidth: 200,
     minHeight: 300,
     resizable: true,
@@ -31,9 +35,19 @@ function createWindow() {
     },
     icon: getIconPath(),
     autoHideMenuBar: true, // hide menu bar by default
-    alwaysOnTop: alwaysOnTop, // initialize with current state
+    alwaysOnTop: alwaysOnTop, // initialize with persisted state
     skipTaskbar: true, // do not show in taskbar
     frame: showTitleBar, // control title bar visibility
+  });
+
+  // Save window bounds on move/resize
+  mainWindow.on('move', () => {
+    const bounds = mainWindow.getBounds();
+    store.set('windowBounds', bounds);
+  });
+  mainWindow.on('resize', () => {
+    const bounds = mainWindow.getBounds();
+    store.set('windowBounds', bounds);
   });
 
   // Get stored URL or use default
@@ -42,8 +56,7 @@ function createWindow() {
   console.log('Loading URL on window creation:', keepUrl);
   mainWindow.loadURL(keepUrl);
 
-  mainWindow.webContents.on('did-finish-load', () => {
-  });
+  mainWindow.webContents.on('did-finish-load', () => {});
 
   mainWindow.on('close', (e) => {
     // Hide window instead of closing (app stays in tray)
@@ -120,6 +133,7 @@ function updateTrayMenu() {
       checked: alwaysOnTop,
       click: () => {
         alwaysOnTop = !alwaysOnTop;
+        store.set('alwaysOnTop', alwaysOnTop);
         if (mainWindow) mainWindow.setAlwaysOnTop(alwaysOnTop);
         updateTrayMenu();
       },
@@ -130,6 +144,7 @@ function updateTrayMenu() {
       checked: showTitleBar,
       click: () => {
         showTitleBar = !showTitleBar;
+        store.set('showTitleBar', showTitleBar);
         if (mainWindow) {
           // Recreate window to apply frame change
           const currentBounds = mainWindow.getBounds();
