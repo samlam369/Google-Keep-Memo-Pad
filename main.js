@@ -45,10 +45,16 @@ function createWindow() {
   mainWindow.on('move', () => {
     const bounds = mainWindow.getBounds();
     store.set('windowBounds', bounds);
+    if (mainWindow && mainWindow.webContents) {
+      mainWindow.webContents.send('window-moved-or-resized');
+    }
   });
   mainWindow.on('resize', () => {
     const bounds = mainWindow.getBounds();
     store.set('windowBounds', bounds);
+    if (mainWindow && mainWindow.webContents) {
+      mainWindow.webContents.send('window-moved-or-resized');
+    }
   });
 
   // Get stored URL or use default
@@ -443,4 +449,18 @@ electron.app.on('web-contents-created', (event, contents) => {
     electron.shell.openExternal(url);
     return { action: 'deny' };
   });
+});
+
+// --- IPC handlers for drag region tracking ---
+const { ipcMain, screen } = electron;
+
+ipcMain.handle('get-cursor-position', () => {
+  // Returns { x, y } in screen coordinates
+  return screen.getCursorScreenPoint();
+});
+
+ipcMain.handle('get-window-bounds', () => {
+  if (!mainWindow) return null;
+  // Returns { x, y, width, height }
+  return mainWindow.getBounds();
 });

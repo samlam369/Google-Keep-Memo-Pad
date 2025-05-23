@@ -37,19 +37,81 @@ window.addEventListener('DOMContentLoaded', () => {
     pointerEvents: 'none', // Let all events pass through
   });
 
-  // Track mouse position for the top margin area
-  const trackMouse = (e) => {
-    if (e.clientY <= 32) {
-      visualIndicator.style.opacity = '1';
-    } else {
-      visualIndicator.style.opacity = '0';
+  // --- Global mouse tracking logic (from preload.mockfix.js) ---
+  let trackingTimeoutId = null;
+  let isInDragRegion = false;
+  let windowBounds = null;
+  let isWindowFocused = document.hasFocus();
+
+  // Helper to update window bounds (for multi-display/resize support)
+  const updateWindowBounds = async () => {
+    windowBounds = await ipcRenderer.invoke('get-window-bounds');
+  };
+
+  // Check if mouse is in drag region
+  const checkMouseInDragRegion = async (x, y) => {
+    if (!windowBounds) return false;
+    const withinX = x >= windowBounds.x && x <= windowBounds.x + windowBounds.width;
+    const withinY = y >= windowBounds.y && y <= windowBounds.y + 32; // 32px drag region
+    return withinX && withinY;
+  };
+
+  const startTracking = () => {
+    const track = async () => {
+      try {
+        const globalPos = await ipcRenderer.invoke('get-cursor-position');
+        const inRegion = await checkMouseInDragRegion(globalPos.x, globalPos.y);
+        if (inRegion !== isInDragRegion) {
+          isInDragRegion = inRegion;
+          visualIndicator.style.opacity = inRegion ? '1' : '0';
+        }
+      } catch (error) {
+        // Ignore errors, keep tracking
+      }
+      trackingTimeoutId = setTimeout(track, 50); // 50ms interval
+    };
+    if (!trackingTimeoutId) track();
+  };
+
+  const stopTracking = () => {
+    if (trackingTimeoutId) {
+      clearTimeout(trackingTimeoutId);
+      trackingTimeoutId = null;
     }
   };
 
-  // Add mouse tracking to window
-  window.addEventListener('mousemove', trackMouse);
-  // Hide indicator if window loses focus
+
+  // Keep windowBounds up-to-date after move/resize
+  ipcRenderer.on('window-moved-or-resized', () => {
+    updateWindowBounds();
+    // Only start tracking if window is focused
+    if (isWindowFocused) {
+      startTracking();
+    }
+  });
+
+  // Event listeners to control tracking
+  window.addEventListener('mouseenter', () => {
+    updateWindowBounds();
+    startTracking();
+  });
+
+  window.addEventListener('mouseleave', () => {
+    stopTracking();
+    isInDragRegion = false;
+    visualIndicator.style.opacity = '0';
+  });
+
+  window.addEventListener('focus', () => {
+    isWindowFocused = true;
+    updateWindowBounds();
+    startTracking();
+  });
+
   window.addEventListener('blur', () => {
+    isWindowFocused = false;
+    stopTracking();
+    isInDragRegion = false;
     visualIndicator.style.opacity = '0';
   });
 
