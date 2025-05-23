@@ -1,7 +1,12 @@
-const { app, BrowserWindow, Tray, Menu, nativeImage, shell } = require('electron');
+const electron = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { ElectronChromeExtensions } = require('electron-chrome-extensions');
+const Store = require('electron-store').default;
+
+console.log('Electron version:', process.versions.electron); // Diagnostic log
+
+const store = new Store();
 
 let mainWindow;
 let tray;
@@ -13,7 +18,7 @@ const WINDOW_WIDTH = 300;
 const WINDOW_HEIGHT = 500;
 
 function createWindow() {
-  mainWindow = new BrowserWindow({
+  mainWindow = new electron.BrowserWindow({
     width: WINDOW_WIDTH,
     height: WINDOW_HEIGHT,
     minWidth: 200,
@@ -31,14 +36,18 @@ function createWindow() {
     frame: showTitleBar, // control title bar visibility
   });
 
-  mainWindow.loadURL('https://keep.google.com/u/0/');
+  // Get stored URL or use default
+  const defaultUrl = 'https://keep.google.com/u/0/';
+  const keepUrl = store.get('keepUrl', defaultUrl);
+  console.log('Loading URL on window creation:', keepUrl);
+  mainWindow.loadURL(keepUrl);
 
   mainWindow.webContents.on('did-finish-load', () => {
   });
 
   mainWindow.on('close', (e) => {
     // Hide window instead of closing (app stays in tray)
-    if (!app.isQuiting) {
+    if (!electron.app.isQuiting) {
       e.preventDefault();
       mainWindow.hide();
     }
@@ -60,7 +69,7 @@ function getIconPath() {
 
 function createTray() {
   const icon = getIconPath();
-  tray = new Tray(icon || undefined);
+  tray = new electron.Tray(icon || undefined);
   tray.setToolTip('Google Keep Memo Pad');
 
   tray.on('double-click', () => {
@@ -90,7 +99,7 @@ function createTray() {
 
 function updateTrayMenu() {
   if (!tray) return;
-  const contextMenu = Menu.buildFromTemplate([
+  const contextMenu = electron.Menu.buildFromTemplate([
     {
       label: 'Show Window',
       type: 'checkbox',
@@ -133,26 +142,209 @@ function updateTrayMenu() {
         updateTrayMenu();
       },
     },
+    {
+      label: 'Set Default Note URL',
+      click: async () => {
+        try {
+          // Get the current URL from the store
+          const defaultUrl = 'https://keep.google.com/u/0/';
+          const currentUrl = store.get('keepUrl', defaultUrl);
+          console.log('Current URL from store:', currentUrl);
+          
+          // Create a custom input dialog using BrowserWindow with proper preload script
+          const inputWindow = new electron.BrowserWindow({
+            parent: mainWindow,
+            modal: true,
+            width: 500,
+            height: 200,
+            minimizable: false,
+            maximizable: false,
+            resizable: false,
+            webPreferences: {
+              nodeIntegration: false,
+              contextIsolation: true,
+              preload: path.join(__dirname, 'url-dialog-preload.js')
+            },
+            autoHideMenuBar: true,
+            title: 'Set Default Note URL',
+          });
+          
+          // Create HTML content for the input dialog
+          const htmlContent = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <title>Set Default Note URL</title>
+              <style>
+                body {
+                  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+                  margin: 20px;
+                  color: #333;
+                  display: flex;
+                  flex-direction: column;
+                  height: calc(100vh - 40px);
+                }
+                .container {
+                  display: flex;
+                  flex-direction: column;
+                  flex: 1;
+                }
+                label {
+                  margin-bottom: 8px;
+                  font-weight: 500;
+                }
+                input {
+                  padding: 8px;
+                  margin-bottom: 20px;
+                  border: 1px solid #ccc;
+                  border-radius: 4px;
+                  font-size: 14px;
+                  width: 100%;
+                }
+                .buttons {
+                  display: flex;
+                  justify-content: flex-end;
+                  gap: 10px;
+                }
+                button {
+                  padding: 8px 16px;
+                  border: none;
+                  border-radius: 4px;
+                  cursor: pointer;
+                  font-size: 14px;
+                }
+                .cancel {
+                  background-color: #e0e0e0;
+                }
+                .save {
+                  background-color: #2196F3;
+                  color: white;
+                }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <label for="urlInput">URL (leave blank to reset to default):</label>
+                <input type="url" id="urlInput" value="${currentUrl}" placeholder="https://keep.google.com/u/0/#LIST/..." />
+                <div class="buttons">
+                  <button class="cancel" onclick="window.electronAPI.cancel()">Cancel</button>
+                  <button class="save" onclick="window.electronAPI.setUrl(document.getElementById('urlInput').value)">Save</button>
+                </div>
+              </div>
+            </body>
+            </html>
+          `;
+          
+          // Create a variable to store the result
+          let result = null;
+          let userCancelled = false;
+          
+          // Set up IPC handlers
+          const { ipcMain } = electron;
+          
+          // Handler for URL selection
+          ipcMain.once('url-selected', (event, url) => {
+            console.log('URL received via IPC:', url);
+            result = url;
+            inputWindow.close();
+          });
+          
+          // Handler for cancellation
+          ipcMain.once('url-dialog-cancelled', () => {
+            console.log('Dialog cancelled via IPC');
+            userCancelled = true;
+            inputWindow.close();
+          });
+          
+          // Load the HTML content
+          inputWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`);
+          
+          // Wait for the window to close
+          await new Promise(resolve => {
+            inputWindow.on('closed', resolve);
+          });
+          
+          // Clean up IPC handlers
+          ipcMain.removeAllListeners('url-selected');
+          ipcMain.removeAllListeners('url-dialog-cancelled');
+          
+          // If user cancelled or closed the window without selecting a URL
+          if (userCancelled || result === null) {
+            console.log('User cancelled or closed the dialog without selecting a URL');
+            return; // Exit without making changes
+          }
+          
+          // Process the result
+          if (result.trim() === '') {
+            console.log('Resetting URL to default');
+            store.delete('keepUrl');
+            
+            // Verify the URL was deleted correctly
+            const checkUrl = store.get('keepUrl', 'DEFAULT_NOT_SET');
+            console.log('URL after reset (should be DEFAULT_NOT_SET):', checkUrl);
+            
+            // Reload the window with the default URL immediately
+            console.log('Reloading window with default URL:', defaultUrl);
+            mainWindow.loadURL(defaultUrl);
+            
+            electron.dialog.showMessageBox(mainWindow, {
+              type: 'info',
+              title: 'URL Reset',
+              message: 'Default URL has been reset and applied.',
+            });
+          } else {
+            // Basic URL validation
+            try {
+              new URL(result); // Check if it's a valid URL format
+              
+              // Save the URL to the store
+              console.log('Saving URL to store:', result);
+              store.set('keepUrl', result);
+              
+              // Verify the URL was saved correctly
+              const savedUrl = store.get('keepUrl');
+              console.log('URL retrieved from store after saving:', savedUrl);
+              
+              // Reload the window with the new URL immediately
+              console.log('Reloading window with URL:', result);
+              mainWindow.loadURL(result);
+              
+              electron.dialog.showMessageBox(mainWindow, {
+                type: 'info',
+                title: 'URL Saved',
+                message: 'New default URL saved and applied.',
+              });
+            } catch (e) {
+              console.error('Invalid URL:', e);
+              electron.dialog.showErrorBox('Invalid URL', 'The URL you entered is not valid. Please try again.');
+            }
+          }
+        } catch (error) {
+          console.error('Error in Set Default Note URL click handler:', error);
+          electron.dialog.showErrorBox('Error', 'Could not set default URL. Please check the console for details.');
+        }
+      },
+    },
     { type: 'separator' },
     {
       label: 'Quit',
       click: () => {
-        app.isQuiting = true;
-        app.quit();
+        electron.app.isQuiting = true;
+        electron.app.quit();
       },
     },
   ]);
   tray.setContextMenu(contextMenu);
 }
 
-app.on('ready', async () => {
+electron.app.on('ready', async () => {
   // Initialize ElectronChromeExtensions with required license
   extensions = new ElectronChromeExtensions({ license: "GPL-3.0" });
 
   // Load the unpacked Chrome extension
   const extPath = path.join(__dirname, 'chrome-google-keep-full-screen');
   try {
-    const loadedExt = await (mainWindow ? mainWindow.webContents.session : require('electron').session.defaultSession).loadExtension(extPath, { allowFileAccess: true });
+    const loadedExt = await (mainWindow ? mainWindow.webContents.session : electron.session.defaultSession).loadExtension(extPath, { allowFileAccess: true });
     console.log('Loaded extension:', loadedExt);
   } catch (err) {
     console.error('Failed to load extension:', err);
@@ -173,23 +365,23 @@ app.on('ready', async () => {
   }
 });
 
-app.on('window-all-closed', (e) => {
+electron.app.on('window-all-closed', (e) => {
   // Don't quit app when all windows are closed (keep in tray)
   e.preventDefault();
 });
 
-app.on('activate', () => {
+electron.app.on('activate', () => {
   if (mainWindow) mainWindow.show();
 });
 
-const gotTheLock = app.requestSingleInstanceLock();
+const gotTheLock = electron.app.requestSingleInstanceLock();
 if (!gotTheLock) {
-  app.quit();
+  electron.app.quit();
 }
 
-app.on('web-contents-created', (event, contents) => {
+electron.app.on('web-contents-created', (event, contents) => {
   contents.setWindowOpenHandler(({ url }) => {
-    shell.openExternal(url);
+    electron.shell.openExternal(url);
     return { action: 'deny' };
   });
 });

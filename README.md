@@ -24,6 +24,7 @@
     - Show Window (toggle window visibility)
     - Always On Top (toggle window always-on-top)
     - Show Title Bar (toggle window title bar visibility)
+    - Set Default Note URL (allows specifying a custom Google Keep note URL to open by default)
 - Left-click tray icon to show/hide main window
 - Main window displays https://keep.google.com/u/0/
 - Default window size: 500x300px, resizable

@@ -23,12 +23,13 @@ Google Keep Memo Pad is an Electron desktop application that delivers access to 
     - "Show Window" (checkbox, toggles window visibility)
     - "Always On Top" (checkbox, toggles window always-on-top)
     - "Show Title Bar" (checkbox, toggles window title bar visibility)
+    - "Set Default Note URL" (allows user to specify a custom Google Keep URL to load by default)
     - "Quit" to close the app
 
 ### 2.2 Main Window
 - **Default Size:** 500 x 300 pixels (height x width)
 - **Resizable:** User can freely resize the window by dragging its edges/corners.
-- **Content:** Displays the live content of https://keep.google.com/u/0/ in a webview/browser window.
+- **Content:** Displays the live content of https://keep.google.com/u/0/ in a webview/browser window. User can set a custom default URL (e.g., a specific note) via the tray menu.
 - **Authentication:** User logs into Google Keep manually in the app window. Enlarging the window is supported for easier login.
 - **Always On Top:** User can toggle this feature from the tray menu.
 
@@ -76,4 +77,4 @@ Google Keep Memo Pad is an Electron desktop application that delivers access to 
 ---
 
 ## 5. Appendix
-- **Last updated:** 2025-05-05
+- **Last updated:** 2025-05-23
