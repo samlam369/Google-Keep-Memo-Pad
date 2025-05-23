@@ -178,7 +178,7 @@ function updateTrayMenu() {
               <style>
                 body {
                   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-                  margin: 20px;
+                  margin: 20px 32px 20px 20px; /* More right margin */
                   color: #333;
                   display: flex;
                   flex-direction: column;
@@ -195,16 +195,24 @@ function updateTrayMenu() {
                 }
                 input {
                   padding: 8px;
-                  margin-bottom: 20px;
+                  margin-bottom: 8px; /* Reduced gap below input */
                   border: 1px solid #ccc;
                   border-radius: 4px;
                   font-size: 14px;
                   width: 100%;
                 }
-                .buttons {
+                .button-row {
                   display: flex;
-                  justify-content: flex-end;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-top: 16px;
                   gap: 10px;
+                }
+                .button-row button {
+                  flex: 0 0 auto;
+                }
+                .current-page {
+                  margin-right: auto;
                 }
                 button {
                   padding: 8px 16px;
@@ -212,6 +220,15 @@ function updateTrayMenu() {
                   border-radius: 4px;
                   cursor: pointer;
                   font-size: 14px;
+                  white-space: nowrap;
+                }
+                .current-page {
+                  background-color: #f5f5f5;
+                  border: 1px solid #ddd;
+                  margin: 0;
+                }
+                .current-page:hover {
+                  background-color: #e8e8e8;
                 }
                 .cancel {
                   background-color: #e0e0e0;
@@ -226,11 +243,24 @@ function updateTrayMenu() {
               <div class="container">
                 <label for="urlInput">URL (leave blank to reset to default):</label>
                 <input type="url" id="urlInput" value="${currentUrl}" placeholder="https://keep.google.com/u/0/#LIST/..." />
-                <div class="buttons">
+                <div class="button-row">
+                  <button class="current-page" onclick="useCurrentPage()">Use Current Page</button>
                   <button class="cancel" onclick="window.electronAPI.cancel()">Cancel</button>
                   <button class="save" onclick="window.electronAPI.setUrl(document.getElementById('urlInput').value)">Save</button>
                 </div>
               </div>
+              <script>
+                async function useCurrentPage() {
+                  try {
+                    const currentUrl = await window.electronAPI.getCurrentPageUrl();
+                    if (currentUrl) {
+                      document.getElementById('urlInput').value = currentUrl;
+                    }
+                  } catch (error) {
+                    console.error('Error getting current page URL:', error);
+                  }
+                }
+              </script>
             </body>
             </html>
           `;
@@ -256,6 +286,18 @@ function updateTrayMenu() {
             inputWindow.close();
           });
           
+          // Handler for getting current page URL
+          ipcMain.once('get-current-page-url', (event) => {
+            try {
+              const currentPageUrl = mainWindow.webContents.getURL();
+              console.log('Current page URL requested:', currentPageUrl);
+              event.sender.send('current-page-url-response', currentPageUrl);
+            } catch (error) {
+              console.error('Error getting current page URL:', error);
+              event.sender.send('current-page-url-response', '');
+            }
+          });
+          
           // Load the HTML content
           inputWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`);
           
@@ -267,6 +309,7 @@ function updateTrayMenu() {
           // Clean up IPC handlers
           ipcMain.removeAllListeners('url-selected');
           ipcMain.removeAllListeners('url-dialog-cancelled');
+          ipcMain.removeAllListeners('get-current-page-url');
           
           // If user cancelled or closed the window without selecting a URL
           if (userCancelled || result === null) {
