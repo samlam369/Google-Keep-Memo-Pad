@@ -27,17 +27,28 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Create the visual indicator (shows on hover)
   const visualIndicator = document.createElement('div');
-  Object.assign(visualIndicator.style, {
-    position: 'fixed',
-    top: '0',
-    left: '0',
-    right: '0',
-    height: '32px',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    opacity: '0',
-    zIndex: '2147483646',
-    pointerEvents: 'none', // Let all events pass through
-    transition: 'opacity 200ms ease-out 100ms', // 200ms fade-out, delayed by 50ms
+  // Add styles for the visual indicator
+  const indicatorStyle = document.createElement('style');
+  indicatorStyle.textContent = `
+    .drag-indicator {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 32px;
+      background-color: rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      z-index: 2147483646;
+      pointer-events: none;
+    }
+    .drag-indicator.fade-out {
+      transition: opacity 200ms ease-out 100ms;
+    }
+  `;
+  document.head.appendChild(indicatorStyle);
+
+  Object.assign(visualIndicator, {
+    className: 'drag-indicator'
   });
 
   // --- Global mouse tracking logic (from preload.mockfix.js) ---
@@ -67,10 +78,10 @@ window.addEventListener('DOMContentLoaded', () => {
         const inRegion = await checkMouseInDragRegion(globalPos.x, globalPos.y);
         isInDragRegion = inRegion;
         if (inRegion) {
-          visualIndicator.style.transition = 'none'; 
+          visualIndicator.classList.remove('fade-out');
           visualIndicator.style.opacity = '1';
         } else {
-          visualIndicator.style.transition = 'opacity 200ms ease-out 100ms'; 
+          visualIndicator.classList.add('fade-out');
           visualIndicator.style.opacity = '0';
         }
       } catch (error) {
