@@ -10,6 +10,7 @@ window.addEventListener('DOMContentLoaded', () => {
   `;
   document.head.appendChild(bodyStyle);
 
+
   // Create the drag region (always present, fully transparent)
   const dragRegion = document.createElement('div');
   Object.assign(dragRegion.style, {
@@ -20,8 +21,9 @@ window.addEventListener('DOMContentLoaded', () => {
     height: '32px',
     webkitAppRegion: 'drag',
     zIndex: '2147483647',
-    pointerEvents: 'none', // Let all events pass through
+    pointerEvents: 'auto', // Changed to auto to detect mouse events
   });
+
 
   // Create the visual indicator (shows on hover)
   const visualIndicator = document.createElement('div');
@@ -35,6 +37,7 @@ window.addEventListener('DOMContentLoaded', () => {
     opacity: '0',
     zIndex: '2147483646',
     pointerEvents: 'none', // Let all events pass through
+    transition: 'opacity 200ms ease-out 100ms', // 200ms fade-out, delayed by 50ms
   });
 
   // --- Global mouse tracking logic (from preload.mockfix.js) ---
@@ -42,6 +45,7 @@ window.addEventListener('DOMContentLoaded', () => {
   let isInDragRegion = false;
   let windowBounds = null;
   let isWindowFocused = document.hasFocus();
+  const TRACKING_INTERVAL = 100; // Mouse position check interval
 
   // Helper to update window bounds (for multi-display/resize support)
   const updateWindowBounds = async () => {
@@ -61,14 +65,18 @@ window.addEventListener('DOMContentLoaded', () => {
       try {
         const globalPos = await ipcRenderer.invoke('get-cursor-position');
         const inRegion = await checkMouseInDragRegion(globalPos.x, globalPos.y);
-        if (inRegion !== isInDragRegion) {
-          isInDragRegion = inRegion;
-          visualIndicator.style.opacity = inRegion ? '1' : '0';
+        isInDragRegion = inRegion;
+        if (inRegion) {
+          visualIndicator.style.transition = 'none'; 
+          visualIndicator.style.opacity = '1';
+        } else {
+          visualIndicator.style.transition = 'opacity 200ms ease-out 100ms'; 
+          visualIndicator.style.opacity = '0';
         }
       } catch (error) {
         // Ignore errors, keep tracking
       }
-      trackingTimeoutId = setTimeout(track, 50); // 50ms interval
+      trackingTimeoutId = setTimeout(track, TRACKING_INTERVAL);
     };
     if (!trackingTimeoutId) track();
   };
