@@ -13,12 +13,15 @@
   },
   "author": "",
   "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "dependencies": {
     "electron-chrome-extensions": "^4.7.0",
     "electron-store": "^10.0.1"
   },
   "devDependencies": {
-    "electron": "^35.0.0"
+    "electron": "^44.6.0"
   },
   "repository": {
     "type": "git",

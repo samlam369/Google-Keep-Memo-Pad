@@ -34,7 +34,7 @@
 ## Getting Started
 
 ### Prerequisites
-- [Node.js](https://nodejs.org/) (v18 or later recommended)
+- [Node.js](https://nodejs.org/) (v22.12.0 or later required; use a supported LTS release)
 - [Git](https://git-scm.com/)
 
 ### Installation
@@ -187,6 +187,22 @@ The [extension fork README](https://github.com/samlam369/chrome-google-keep-full
 - Main process: `main.js`
 - Run `npm test` for extension installation/update integration tests. They use temporary local Git repositories and do not contact GitHub or modify the installed extension.
 - No auto-update or analytics in initial release
+
+### Dependency Security Updates
+
+Dependabot checks npm dependencies weekly and opens update pull requests. Review security alerts under the repository's **Security → Dependabot** tab. An alert closes after GitHub detects the fixed dependency on the default branch.
+
+Quit the app from its system tray menu before installing dependency updates, because Windows locks the running Electron files. After checking out an update, run:
+
+```sh
+npm ci
+npm audit
+npm test
+npm run test:render
+npm start
+```
+
+Check Google Keep login, opening/editing a note, fullscreen, and hiding/reopening the window from the tray before merging an Electron upgrade. The rendering test uses a local fixture; it does not verify Google's live page or login. Electron is listed as a development dependency but supplies the app's runtime, so its security updates matter for users too.
 
 ## License
 MIT
