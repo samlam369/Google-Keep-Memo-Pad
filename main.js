@@ -93,8 +93,6 @@ function createWindow() {
     height: bounds.height,
     x: bounds.x,
     y: bounds.y,
-    minWidth: 200,
-    minHeight: 300,
     resizable: true,
     show: false,
     webPreferences: {

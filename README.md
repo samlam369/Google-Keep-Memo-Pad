@@ -27,7 +27,7 @@
     - Set Default Note URL (allows specifying a custom Google Keep note URL to open by default)
 - Left-click tray icon to show/hide main window
 - Main window displays https://keep.google.com/u/0/
-- Default window size: 500x300px, resizable
+- Default window size: 300x500px, resizable with no app-imposed minimum size (the operating system may still enforce a minimum, especially with the title bar shown)
 - Draggable window region: A subtle transparent margin at the top allows window repositioning even when the title bar is hidden
 - **Manual login required**
 
