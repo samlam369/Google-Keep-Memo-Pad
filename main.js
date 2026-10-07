@@ -520,7 +520,8 @@ electron.app.on('ready', async () => {
   // Load the unpacked Chrome extension
   const extPath = path.join(__dirname, 'chrome-google-keep-full-screen');
   try {
-    const loadedExt = await (mainWindow ? mainWindow.webContents.session : electron.session.defaultSession).loadExtension(extPath, { allowFileAccess: true });
+    const session = mainWindow ? mainWindow.webContents.session : electron.session.defaultSession;
+    const loadedExt = await session.extensions.loadExtension(extPath, { allowFileAccess: true });
     console.log('Loaded extension:', loadedExt);
   } catch (err) {
     console.error('Failed to load extension:', err);
