@@ -67,8 +67,10 @@ app.whenReady().then(async () => {
       viewportHeight: innerHeight, buttons: note.querySelectorAll('.gkfs-toggle').length,
       closeVisible: getComputedStyle(closeButton).display !== 'none' &&
         closeRect.width > 0 && closeRect.height > 0,
-      closeInViewport: closeRect.left >= 0 && closeRect.top >= 0 &&
-        closeRect.right <= innerWidth && closeRect.bottom <= innerHeight };
+      // Fractional Windows display scaling can round innerWidth/innerHeight
+      // down while DOMRect retains fractions. Match the fullscreen tolerance.
+      closeInViewport: closeRect.left >= -1 && closeRect.top >= -1 &&
+        closeRect.right <= innerWidth + 1 && closeRect.bottom <= innerHeight + 1 };
     closeButton.click();
     await settle();
     const closed = { marked: container.classList.contains('gkfs-open-note'),
