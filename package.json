@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "electron-chrome-extensions": "^4.9.0",
-    "electron-store": "^10.0.1"
+    "electron-store": "^11.0.2"
   },
   "devDependencies": {
     "electron": "^44.6.0"
